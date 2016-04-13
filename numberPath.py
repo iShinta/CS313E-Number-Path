@@ -16,10 +16,26 @@ class Problem(object):
         self.col_start = st_col
         self.sum = s
 
+        self.cVal = self.grid[self.row_start][self.col_start]
+
+    def updateMin(self):
         #Updates the path
         self.path = self.getPath()
-        self.path.append(self.grid[st_row][st_col])
-        print("Next Value: " +str(self.getCurrVal()))
+        self.path.append(self.grid[self.row_start][self.col_start])
+
+        #Updates the sum
+        self.sum += self.getCurrVal()
+
+        #Update current cell to None
+        self.grid[self.row_start][self.col_start] = None
+
+    def update(self):
+        self.updateMin()
+
+        #Shows and solves the new Problem
+        print("Current Value: " +str(self.getCurrVal()))
+        print("Current Sum: " +str(self.sum))
+        print(self)
 
     def __str__(self):
         line = ""
@@ -30,6 +46,7 @@ class Problem(object):
                 line += "\n"
         return line
 
+    #Transforms all the strings in the grid to integers
     def convert(self, gd):
         res = []
         for i in range(len(gd)):
@@ -42,6 +59,7 @@ class Problem(object):
             res.append(temp)
         return res
 
+    #Returns a copy of the grid
     def getGrid(self):
         res = []
         for i in range(len(self.grid)):
@@ -51,43 +69,47 @@ class Problem(object):
             res.append(temp)
         return res
 
+    #Returns a copy of the path
     def getPath(self):
         res = []
         for i in range(len(self.path)):
             res.append(self.path[i])
         return res
 
+    #Gets the current value
     def getCurrVal(self):
-        return self.grid[self.row_start][self.col_start]
+        return self.cVal
 
 def solve(pb):
     print("\nSolving...")
+    #Base case
     if((pb.row_start == end_row) & (pb.col_start == end_col) & (pb.sum <= targetValue)):
         print("We reached the target value")
         return pb.path
+    #If the sum goes over the targer, we end the recursion
     elif(pb.sum > targetValue):
         print("We went over the target value. Backing up a step...")
         return None
+    #Otherwise we explore more
     else:
         #Current position information
         currVal = pb.getCurrVal()
 
         #New Problem in case of movement
         newGrid = pb.getGrid()
-        newGrid[pb.row_start][pb.col_start] = None
-        newSum = pb.sum + currVal
+        newSum = pb.sum
         newPath = pb.getPath()
 
         #Moving right
         if(pb.col_start < grid_cols - 1):
             if(pb.grid[pb.row_start][pb.col_start + 1] != None):
-                showCurrInfo(pb)
+                #showCurrInfo(pb)
                 print("Going right")
-                print("Sum was " +str(pb.sum) + ", is now " +str(newSum) +". Target is " +str(targetValue))
+                print("Old Sum is: " +str(newSum))
 
                 new_pb = Problem(newGrid, pb.row_start, pb.col_start + 1, newSum, newPath)
                 #Shows and solves the new Problem
-                print(new_pb)
+                new_pb.update()
                 res = solve(new_pb)
                 if res != None:
                     return res
@@ -97,12 +119,12 @@ def solve(pb):
         #Moving up
         if(pb.row_start - 1 >= 0):
             if(pb.grid[pb.row_start - 1][pb.col_start] != None):
-                showCurrInfo(pb)
+                #showCurrInfo(pb)
                 print("Going up")
-                print("Sum was " +str(pb.sum) + ", is now " +str(newSum) +". Target is " +str(targetValue))
+                print("Old Sum is: " +str(newSum))
+
                 new_pb = Problem(newGrid, pb.row_start - 1, pb.col_start, newSum, newPath)
-                #Shows and solves the new Problem
-                print(new_pb)
+                new_pb.update()
                 res = solve(new_pb)
                 if res != None:
                     return res
@@ -112,12 +134,12 @@ def solve(pb):
         #Moving down
         if(pb.row_start < grid_rows - 1):
             if(pb.grid[pb.row_start + 1][pb.col_start] != None):
-                showCurrInfo(pb)
+                #showCurrInfo(pb)
                 print("Going down")
-                print("Sum was " +str(pb.sum) + ", is now " +str(newSum) +". Target is " +str(targetValue))
+                print("Old Sum is: " +str(newSum))
+
                 new_pb = Problem(newGrid, pb.row_start + 1, pb.col_start, newSum, newPath)
-                #Shows and solves the new Problem
-                print(new_pb)
+                new_pb.update()
                 res = solve(new_pb)
                 if res != None:
                     return res
@@ -127,12 +149,12 @@ def solve(pb):
         #Moving left
         if(pb.col_start - 1 >= 0):
             if(pb.grid[pb.row_start][pb.col_start - 1] != None):
-                showCurrInfo(pb)
+                #showCurrInfo(pb)
                 print("Going left")
-                print("Sum was " +str(pb.sum) + ", is now " +str(newSum) +". Target is " +str(targetValue))
+                print("Old Sum is: " +str(newSum))
+
                 new_pb = Problem(newGrid, pb.row_start, pb.col_start - 1, newSum, newPath)
-                #Shows and solves the new Problem
-                print(new_pb)
+                new_pb.update()
                 res = solve(new_pb)
                 if res != None:
                     return res
@@ -182,8 +204,16 @@ def main():
 
     print("Original Matrix")
     print(pb)
-    res = solve(pb)
-    print("AND THE WINNER PATH IS...... " +str(res))
+    pb.updateMin()
+    print("\nStart solving...")
+    print("Target is " +str(targetValue))
+    showCurrInfo(pb)
+    print(pb)
 
+    #Launches the recursive function
+    res = solve(pb)
+
+    #Display the solution
+    print("AND THE WINNER PATH IS...... " +str(res))
 
 main()
