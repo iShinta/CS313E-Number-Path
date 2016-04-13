@@ -51,7 +51,7 @@ class Problem(object):
 
 def solve(pb):
     print("\nSolving...")
-    if(pb.sum == targetValue):
+    if((pb.row_start == end_row) & (pb.col_start == end_col)):
         print("We reached the target value")
         return pb.path
     elif(pb.sum > targetValue):
@@ -96,7 +96,6 @@ def solve(pb):
 
         #Moving down
         if(pb.row_start < grid_rows - 1):
-            print("Row start = " +str(pb.row_start))
             if(pb.grid[pb.row_start + 1][pb.col_start] != None):
                 showCurrInfo(pb)
                 print("Going down")
@@ -121,7 +120,7 @@ def solve(pb):
         else:
             print("Cannot go left")
 
-        print("No direction possible. Backing up a step...")
+        print("No direction possible. Backing up a step... " +str(pb.path))
         return None
 
 def showCurrInfo(pb):
@@ -149,6 +148,8 @@ def main():
             global targetValue
             global grid_rows
             global grid_cols
+            global end_row
+            global end_col
             targetValue = (int)(fl_list[0])
             grid_rows = (int)(fl_list[1])
             grid_cols = (int)(fl_list[2])
