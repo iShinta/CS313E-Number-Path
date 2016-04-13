@@ -1,20 +1,22 @@
 class Problem(object):
     def __init__(self, gd, st_row, st_col, s, path):
         self.grid = self.convert(gd)
-        self.path = []
+        self.path = path
         self.row_start = st_row
         self.col_start = st_col
         self.sum = s
 
-        #Inits the first value of path
-        self.path.append(self.grid[self.row_start][self.col_start])
+        #Updates the path
+        self.path.append(self.grid[st_row][st_col])
+        print("Next Value: " +str(self.getCurrVal()))
 
     def __str__(self):
         line = ""
         for i in range(len(self.grid)):
             for j in range(len(self.grid[i])):
                 line += str(self.grid[i][j]).ljust(5)
-            line += "\n"
+            if(i != len(self.grid)-1):
+                line += "\n"
         return line
 
     def convert(self, gd):
@@ -29,7 +31,7 @@ class Problem(object):
             res.append(temp)
         return res
 
-    def copy(self):
+    def getGrid(self):
         res = []
         for i in range(len(self.grid)):
             temp = []
@@ -38,57 +40,99 @@ class Problem(object):
             res.append(temp)
         return res
 
+    def getPath(self):
+        res = []
+        for i in range(len(self.path)):
+            res.append(self.path[i])
+        return res
+
+    def getCurrVal(self):
+        return self.grid[self.row_start][self.col_start]
+
 def solve(pb):
     print("\nSolving...")
-    print(pb)
     if(pb.sum == targetValue):
         print("We reached the target value")
         return pb.path
     elif(pb.sum > targetValue):
-        print("We went over the target value")
+        print("We went over the target value. Backing up a step...")
         return None
     else:
         #Current position information
-        print("Current coordinates: [" + str(pb.row_start) + "," + str(pb.col_start) + "]")
-        currVal = pb.grid[pb.row_start][pb.col_start]
-        print("Current Value: " +str(currVal))
+        currVal = pb.getCurrVal()
 
         #New Problem in case of movement
-        newGrid = pb.copy()
+        newGrid = pb.getGrid()
         newGrid[pb.row_start][pb.col_start] = None
         newSum = pb.sum + currVal
+        newPath = pb.getPath()
 
         #Moving right
-        if((pb.col_start < grid_cols - 1)):
-            print("Going right")
-            print("Sum was " +str(pb.sum) + ", is now " +str(newSum) +". Target is " +str(targetValue))
-            new_pb = Problem(newGrid, pb.row_start, pb.col_start + 1, newSum, pb.path.append(currVal))
-            #Solve the new Problem
-            solve(new_pb)
-        #Moving up
-        elif(pb.row_start - 1 >= 0 & pb.grid[pb.row_start - 1][pb.col_start] != None):
-            print("Going up")
-            print("Sum was " +str(pb.sum) + ", is now " +str(newSum) +". Target is " +str(targetValue))
-            new_pb = Problem(newGrid, pb.row_start - 1, pb.col_start, newSum, pb.path.append(currVal))
-            #Solve the new Problem
-            solve(new_pb)
-        #Moving down
-        elif(pb.row_start + 1 <= grid_rows):
-            print("Going down")
-            print("Sum was " +str(pb.sum) + ", is now " +str(newSum) +". Target is " +str(targetValue))
-            new_pb = Problem(newGrid, pb.row_start + 1, pb.col_start, newSum, pb.path.append(currVal))
-            #Solve the new Problem
-            solve(new_pb)
-        #Moving left
-        elif((pb.col_start - 1 >= 0) & (pb.grid[pb.row_start][pb.col_start - 1] != None)):
-            print("Going left")
-            print("Sum was " +str(pb.sum) + ", is now " +str(newSum) +". Target is " +str(targetValue))
-            new_pb = Problem(newGrid, pb.row_start, pb.col_start - 1, newSum)
-            #Solve the new Problem
-            solve(new_pb)
+        if(pb.col_start < grid_cols - 1):
+            if(pb.grid[pb.row_start][pb.col_start + 1] != None):
+                showCurrInfo(pb)
+                print("Going right")
+                print("Sum was " +str(pb.sum) + ", is now " +str(newSum) +". Target is " +str(targetValue))
+
+                new_pb = Problem(newGrid, pb.row_start, pb.col_start + 1, newSum, newPath)
+                #Shows and solves the new Problem
+                print(new_pb)
+                solve(new_pb)
         else:
-            print("No direction possible")
-            return None
+            print("Cannot go right")
+
+        #Moving up
+        if(pb.row_start - 1 >= 0):
+            if(pb.grid[pb.row_start - 1][pb.col_start] != None):
+                showCurrInfo(pb)
+                print("Going up")
+                print("Sum was " +str(pb.sum) + ", is now " +str(newSum) +". Target is " +str(targetValue))
+                new_pb = Problem(newGrid, pb.row_start - 1, pb.col_start, newSum, newPath)
+                #Shows and solves the new Problem
+                print(new_pb)
+                solve(new_pb)
+        else:
+            print("Cannot go up")
+
+        #Moving down
+        if(pb.row_start < grid_rows - 1):
+            print("Row start = " +str(pb.row_start))
+            if(pb.grid[pb.row_start + 1][pb.col_start] != None):
+                showCurrInfo(pb)
+                print("Going down")
+                print("Sum was " +str(pb.sum) + ", is now " +str(newSum) +". Target is " +str(targetValue))
+                new_pb = Problem(newGrid, pb.row_start + 1, pb.col_start, newSum, newPath)
+                #Shows and solves the new Problem
+                print(new_pb)
+                solve(new_pb)
+        else:
+            print("Cannot go down")
+
+        #Moving left
+        if(pb.col_start - 1 >= 0):
+            if(pb.grid[pb.row_start][pb.col_start - 1] != None):
+                showCurrInfo(pb)
+                print("Going left")
+                print("Sum was " +str(pb.sum) + ", is now " +str(newSum) +". Target is " +str(targetValue))
+                new_pb = Problem(newGrid, pb.row_start, pb.col_start - 1, newSum, newPath)
+                #Shows and solves the new Problem
+                print(new_pb)
+                solve(new_pb)
+        else:
+            print("Cannot go left")
+
+        print("No direction possible. Backing up a step...")
+        return None
+
+def showCurrInfo(pb):
+    #Current position information
+    currVal = pb.getCurrVal()
+    print("Current coordinates: [" + str(pb.row_start) + "," + str(pb.col_start) + "]")
+    print("Current Value: " +str(currVal))
+    print("Current Path: " +str(pb.path))
+
+def isValid():
+    print("Checking if next move is valid")
 
 def main():
     print("______Program Number Path______")
@@ -119,6 +163,8 @@ def main():
 
     pb = Problem(grid, start_row, start_col, 0, [])
 
+    print("Original Matrix")
+    print(pb)
     solve(pb)
 
 
