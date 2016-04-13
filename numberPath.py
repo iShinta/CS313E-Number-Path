@@ -77,7 +77,9 @@ def solve(pb):
                 new_pb = Problem(newGrid, pb.row_start, pb.col_start + 1, newSum, newPath)
                 #Shows and solves the new Problem
                 print(new_pb)
-                solve(new_pb)
+                res = solve(new_pb)
+                if res != None:
+                    return res
         else:
             print("Cannot go right")
 
@@ -90,7 +92,9 @@ def solve(pb):
                 new_pb = Problem(newGrid, pb.row_start - 1, pb.col_start, newSum, newPath)
                 #Shows and solves the new Problem
                 print(new_pb)
-                solve(new_pb)
+                res = solve(new_pb)
+                if res != None:
+                    return res
         else:
             print("Cannot go up")
 
@@ -103,7 +107,9 @@ def solve(pb):
                 new_pb = Problem(newGrid, pb.row_start + 1, pb.col_start, newSum, newPath)
                 #Shows and solves the new Problem
                 print(new_pb)
-                solve(new_pb)
+                res = solve(new_pb)
+                if res != None:
+                    return res
         else:
             print("Cannot go down")
 
@@ -116,7 +122,9 @@ def solve(pb):
                 new_pb = Problem(newGrid, pb.row_start, pb.col_start - 1, newSum, newPath)
                 #Shows and solves the new Problem
                 print(new_pb)
-                solve(new_pb)
+                res = solve(new_pb)
+                if res != None:
+                    return res
         else:
             print("Cannot go left")
 
@@ -129,9 +137,6 @@ def showCurrInfo(pb):
     print("Current coordinates: [" + str(pb.row_start) + "," + str(pb.col_start) + "]")
     print("Current Value: " +str(currVal))
     print("Current Path: " +str(pb.path))
-
-def isValid():
-    print("Checking if next move is valid")
 
 def main():
     print("______Program Number Path______")
@@ -166,7 +171,8 @@ def main():
 
     print("Original Matrix")
     print(pb)
-    solve(pb)
+    res = solve(pb)
+    print("AND THE WINNER PATH IS...... " +str(res))
 
 
 main()
