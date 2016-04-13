@@ -51,7 +51,7 @@ class Problem(object):
 
 def solve(pb):
     print("\nSolving...")
-    if((pb.row_start == end_row) & (pb.col_start == end_col)):
+    if((pb.row_start == end_row) & (pb.col_start == end_col) & (pb.sum <= targetValue)):
         print("We reached the target value")
         return pb.path
     elif(pb.sum > targetValue):
