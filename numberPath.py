@@ -1,3 +1,13 @@
+#  File: NumberPath.py
+#  Description: We write a program that finds a path through a grid of numbers using depth-first search.
+#  Student's Name: Minh-Tri Ho
+#  Student's UT EID: mh47723
+#  Course Name: CS 313E
+#  Unique Number: 50940
+#
+#  Date Created: 04/12/16
+#  Date Last Modified: 04/12/16
+
 class Problem(object):
     def __init__(self, gd, st_row, st_col, s, path):
         self.grid = self.convert(gd)
@@ -7,6 +17,7 @@ class Problem(object):
         self.sum = s
 
         #Updates the path
+        self.path = self.getPath()
         self.path.append(self.grid[st_row][st_col])
         print("Next Value: " +str(self.getCurrVal()))
 
@@ -142,7 +153,7 @@ def main():
     print("______Program Number Path______")
 
     #Opening pathdata.txt file
-    src = open('./pathdata1.txt', 'r')
+    src = open('./pathdata3.txt', 'r')
     line_count = 1
     grid = []
     for line in src:
